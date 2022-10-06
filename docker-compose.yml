@@ -1,0 +1,34 @@
+version: '3.7'
+
+services:
+  web:
+    build:
+      context: .
+      dockerfile: .
+    env_file: .env
+    volumes:
+      - .:/application
+    ports: [9090:9090]
+    depends_on:
+      - postgresdb
+  postgresdb:
+    image: postgres:12.5-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_HOST_AUTH_METHOD: trust
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: rootpassword
+      POSTGRES_DB: goboilerdb
+
+  pgadmin:
+    image: dpage/pgadmin4
+    ports:
+      - "5555:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: leonard.local@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: abc123!@#
+    depends_on:
+      - postgresdb
+    restart: unless-stopped
+
